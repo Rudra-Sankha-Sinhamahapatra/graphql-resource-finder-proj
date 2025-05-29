@@ -3,9 +3,17 @@ import type { SigninArgs, SignupArgs } from "../../interfaces";
 import { logger, token as passwordToken, password as passwordUtils } from "../../utils";
 import { authValidation } from "../../validations/auth";
 import UserModel from "../../db/models/userModel";
-
+import type { Context } from "../../types";
+import { checkAuth } from "../../context";
 
 export const AuthResolver = {
+    Query: {
+        hello: () => "Hello from GraphQL!",
+    me: (_: any, __: any, context: Context) => {
+      const user = checkAuth(context);
+      return user;
+    }
+    },
     Mutation: {
         signup: async (_:any,args: SignupArgs) => {
             try {
@@ -63,6 +71,7 @@ export const AuthResolver = {
                     id: user._id,
                     email: user.email,
                     username: user.username,
+                    createdAt: user.createdAt
                 },
                 token
              };
@@ -126,7 +135,9 @@ export const AuthResolver = {
                 return {
                     data: {
                         id: existingUser.id,
-                        email: existingUser.email
+                        email: existingUser.email,
+                        username: existingUser.username,
+                        createdAt: existingUser.createdAt
                     },
                     token
                 }

@@ -1,9 +1,14 @@
-import type { Request,Response } from "express";
-import type { User } from "./user";
+import type { Request, Response } from 'express';
+
+export interface User {
+  id: string;
+  email: string;
+  username: string;
+}
 
 export interface Context {
-    user: User;
-    token?:string;
-    req: Request;
-    res: Response;
+  token?: string | null;
+  user?: User | null;
+  req: Request;
+  res: Response;
 }

@@ -1,5 +1,4 @@
 import mongoose from "mongoose";
-import dotenv from "dotenv/config"
 import { config } from "../config/config";
 
 const MONGODB_URI = config.mongoURI;
@@ -9,12 +8,10 @@ if(!MONGODB_URI) {
     process.exit(1);
 }
 
-const mongoConnect = ():void => {
+export const mongoConnect = ():void => {
  mongoose.connect(MONGODB_URI).then(() => {
   console.log("DATABASE Connected");
  }).catch((error) => {
     console.error("Error connecting to Database ",error);
  });
 }
-
-export default mongoConnect;
