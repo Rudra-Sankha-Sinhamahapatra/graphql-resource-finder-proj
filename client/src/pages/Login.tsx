@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../hooks/useAuth';
 
 interface FormData {
   email: string;
@@ -8,16 +9,25 @@ interface FormData {
 
 export default function Login() {
   const navigate = useNavigate();
+  const { signIn } = useAuth();
   const [formData, setFormData] = useState<FormData>({
     email: '',
     password: '',
   });
+  const [error, setError] = useState('');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: Handle login with Apollo Client
-    console.log('Login submitted:', formData);
-    navigate('/resources');
+    setError('');
+    
+    try {
+      const response = await signIn(formData.email, formData.password);
+      if (response?.data) {
+        navigate('/resources');
+      }
+    } catch (err) {
+      setError('Invalid email or password');
+    }
   };
 
   return (
@@ -43,7 +53,7 @@ export default function Login() {
                 required
                 value={formData.email}
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                className="block px-2 w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
               />
             </div>
           </div>
@@ -63,7 +73,7 @@ export default function Login() {
                 required
                 value={formData.password}
                 onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                className="px-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
               />
             </div>
           </div>
@@ -77,6 +87,8 @@ export default function Login() {
             </button>
           </div>
         </form>
+
+        {error && <p className="mt-2 text-center text-sm text-red-600">{error}</p>}
 
         <p className="mt-10 text-center text-sm text-gray-500">
           Not a member?{' '}
