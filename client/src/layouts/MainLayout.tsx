@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { Link, Outlet, useLocation } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { Dialog, } from '@headlessui/react';
 import {
   Bars3Icon,
@@ -16,10 +16,31 @@ function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(' ');
 }
 
+interface User {
+  username: string;
+  email: string;
+}
+
 export default function MainLayout() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [user, setUser] = useState<User | null>(null);
   const location = useLocation();
-  const isAuthenticated = false; // TODO: Replace with actual auth state
+  const navigate = useNavigate();
+  const [profileMenuOpen, setProfileMenuOpen] = useState(false);
+
+  useEffect(() => {
+    const userStr = localStorage.getItem('user');
+    if (userStr) {
+      setUser(JSON.parse(userStr));
+    }
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    setUser(null);
+    navigate('/login');
+  };
 
   return (
     <div className="min-h-screen bg-white">
@@ -57,15 +78,31 @@ export default function MainLayout() {
             ))}
           </div>
           <div className="hidden lg:flex lg:flex-1 lg:justify-end">
-            {isAuthenticated ? (
-              <button
-                className="text-sm font-semibold leading-6 text-gray-900"
-                onClick={() => {
-                  // TODO: Handle logout
-                }}
-              >
-                Log out
-              </button>
+            {user ? (
+              <div className="relative">
+                <button
+                  type="button"
+                  className="flex items-center gap-x-4 text-sm font-semibold leading-6 text-gray-900"
+                  onClick={() => setProfileMenuOpen(!profileMenuOpen)}
+                >
+                  <span className="h-8 w-8 rounded-full bg-indigo-600 flex items-center justify-center text-white">
+                    {user.username[0].toUpperCase()}
+                  </span>
+                </button>
+                {profileMenuOpen && (
+                  <div className="absolute right-0 mt-2 w-48 rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5">
+                    <div className="px-4 py-2 text-sm text-gray-700">
+                      {user.username}
+                    </div>
+                    <button
+                      onClick={handleLogout}
+                      className="block w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100"
+                    >
+                      Log out
+                    </button>
+                  </div>
+                )}
+              </div>
             ) : (
               <Link
                 to="/login"
@@ -107,16 +144,26 @@ export default function MainLayout() {
                   ))}
                 </div>
                 <div className="py-6">
-                  {isAuthenticated ? (
-                    <button
-                      className="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
-                      onClick={() => {
-                        // TODO: Handle logout
-                        setMobileMenuOpen(false);
-                      }}
-                    >
-                      Log out
-                    </button>
+                  {user ? (
+                    <div>
+                      <div className="px-4 py-2 text-base font-semibold">
+                        <div className="flex items-center gap-x-4">
+                          <span className="h-8 w-8 rounded-full bg-indigo-600 flex items-center justify-center text-white">
+                            {user.username[0].toUpperCase()}
+                          </span>
+                          <span>{user.username}</span>
+                        </div>
+                      </div>
+                      <button
+                        className="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
+                        onClick={() => {
+                          handleLogout();
+                          setMobileMenuOpen(false);
+                        }}
+                      >
+                        Log out
+                      </button>
+                    </div>
                   ) : (
                     <Link
                       to="/login"
