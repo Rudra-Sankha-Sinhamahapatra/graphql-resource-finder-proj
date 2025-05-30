@@ -7,7 +7,6 @@ export interface User {
 }
 
 export interface Context {
-  token?: string | null;
   user?: User | null;
   req: Request;
   res: Response;

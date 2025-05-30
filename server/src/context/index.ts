@@ -26,6 +26,7 @@ interface ContextProps {
       if (token) {
         try {
           const decoded = await tokenUtils.verify(token);
+
           if (decoded && typeof decoded === 'object' && decoded.userId) {
             const userDoc = await UserModel.findById(decoded.userId)
               .select('email username')
@@ -44,10 +45,14 @@ interface ContextProps {
         }
       }
 
-      return { token, user, req, res };
+      return { user: user? {
+        id: user.id,
+        email: user.email,
+        username: user.username
+      }:null, req, res };
     } catch (error) {
       logger.error('Context creation error:', error);
-      return { token: null, user: null, req, res };
+      return { user: null, req, res };
     }
   };
 

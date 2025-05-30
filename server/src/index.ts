@@ -50,8 +50,6 @@ async function Main() {
 
   app.use(
     "/graphql",
-    cors<cors.CorsRequest>(),
-    express.json(),
     expressMiddleware<Context>(server, {
       context: createContext
     })

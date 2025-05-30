@@ -16,13 +16,13 @@ const ResourceSchema = new Schema<Resource>(
             type: String,
             required: true,
             minlength: 3,
-            maxlength:20,
+            maxlength:100,
         },
         description: {
             type: String,
             required: true,
             minlength: 3,
-            maxlength:50,
+            maxlength:200,
         },
         link: {
             type: String,
