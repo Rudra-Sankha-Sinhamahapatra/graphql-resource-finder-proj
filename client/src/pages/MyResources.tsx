@@ -5,7 +5,7 @@ import { PencilIcon, TrashIcon, LinkIcon } from '@heroicons/react/24/outline';
 import { Link } from 'react-router-dom';
 
 export default function MyResources() {
-  // Mock user ID for demo
+  //Mock User
   const userId = 'user1';
   const [resources] = useState<Resource[]>(
     mockResources.filter((resource) => resource.userId === userId)
@@ -24,7 +24,7 @@ export default function MyResources() {
           <div className="mt-4 sm:ml-16 sm:mt-0">
             <Link
               to="/create-resource"
-              className="block rounded-md bg-indigo-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+              className="block rounded-md bg-indigo-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
             >
               Add Resource
             </Link>
