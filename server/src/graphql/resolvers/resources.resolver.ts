@@ -139,7 +139,34 @@ export const ResourceResolver = {
           extensions: { code: "INTERNAL_SERVER_ERROR" },
         });
       }
-    }
+    },
+    findAllResources: async (
+      _:any,
+      __:any,
+      context: Context
+    ) => {
+      try {
+        const user = checkAuth(context);
+        if(!user) {
+          throw new GraphQLError("Not authenticated", {
+            extensions: { code: "UNAUTHENTICATED" },
+          });
+        }
+  
+        const resources = await ResourceModel.find({});
+        return resources;
+      } catch (error) {
+        logger.error("Error during Resources fetching: ", error);
+
+        if (error instanceof GraphQLError) {
+          throw error;
+        }
+
+        throw new GraphQLError("Internal Server Error", {
+          extensions: { code: "INTERNAL_SERVER_ERROR" },
+        });
+      }
+    },
   },
   Mutation: {
     createResource: async (
@@ -270,6 +297,6 @@ export const ResourceResolver = {
           extensions: { code: "INTERNAL_SERVER_ERROR" },
         });
     }
-    }
+  }
   },
 };

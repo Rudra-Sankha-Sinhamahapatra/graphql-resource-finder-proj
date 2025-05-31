@@ -22,6 +22,7 @@ export const ResourceTypeDefs = gql`
     healthcheck: String!
     findAllResourcesByUserId: [Resource!]!
     findAllResourcesById(id: ID!): Resource!
+    findAllResources: [Resource!]!
   }
 
   # Mutations
