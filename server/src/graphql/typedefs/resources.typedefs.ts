@@ -1,6 +1,9 @@
 import { gql } from "graphql-tag";
 
 export const ResourceTypeDefs = gql`
+
+  scalar DateTime
+  
   # Types
   type Resource {
     id: ID!
@@ -10,8 +13,8 @@ export const ResourceTypeDefs = gql`
     imageUrl: String!
     userId: ID!
     user: User
-    createdAt: String!
-    updatedAt: String!
+    createdAt: DateTime!
+    updatedAt: DateTime!
   }
 
   # Queries

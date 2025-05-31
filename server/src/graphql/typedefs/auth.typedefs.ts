@@ -2,12 +2,10 @@ import { gql } from "graphql-tag"
 
 export const AuthTypeDefs = gql`
 # Types
-  type User {
+  type UserMainData {
     id: ID!
     username: String!
     email: String!
-    createdAt: String!
-    updatedAt: String!
   }
 
   type UserData {
@@ -36,7 +34,7 @@ export const AuthTypeDefs = gql`
 
     # Add Query type
   type Query {
-    me: User              # Current user query
+    me: UserMainData             # Current user query
     hello: String         # Simple test query
   }
 

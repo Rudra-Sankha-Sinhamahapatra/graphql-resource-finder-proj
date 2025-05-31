@@ -11,7 +11,11 @@ export const AuthResolver = {
         hello: () => "Hello from GraphQL!",
     me: (_: any, __: any, context: Context) => {
       const user = checkAuth(context);
-      return user;
+      return {
+        id: user.id,
+        username: user.username,
+        email: user.email
+      }
     }
     },
     Mutation: {

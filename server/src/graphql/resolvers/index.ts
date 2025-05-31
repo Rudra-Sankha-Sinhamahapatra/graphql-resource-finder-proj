@@ -1,5 +1,6 @@
 import { AuthResolver } from "./auth.resolvers";
 import { ResourceResolver } from "./resources.resolver";
+import { userResolver } from "./user.resolver";
 
 export const resolvers = {
   Resource:{
@@ -8,6 +9,7 @@ export const resolvers = {
   Query: {
     ...AuthResolver.Query,
     ...ResourceResolver.Query,
+    ...userResolver.Query,
   },
   Mutation: {
     ...AuthResolver.Mutation,

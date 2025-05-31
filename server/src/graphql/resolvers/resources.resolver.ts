@@ -252,6 +252,7 @@ export const ResourceResolver = {
           description,
           link,
           imageUrl,
+          updatedAt: new Date().toISOString(),
         },
         { new: true } 
       );
