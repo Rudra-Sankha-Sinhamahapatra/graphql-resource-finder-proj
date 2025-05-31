@@ -23,12 +23,15 @@ function classNames(...classes: string[]) {
 
 export default function MainLayout() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const { user, logout } = useAuthContext();
+  const { user, logout, setUser } = useAuthContext();
   const location = useLocation();
   const navigate = useNavigate();
   const [profileMenuOpen, setProfileMenuOpen] = useState(false);
 
   const { loading: userLoading } = useQuery<{getUserDetails: User}>(GET_USER_DETAILS,{
+    onCompleted: (data) => {
+      setUser(data.getUserDetails);
+    },
     onError: (error) => {
       if (error.message.includes('Unauthorized')) {
        logout();
