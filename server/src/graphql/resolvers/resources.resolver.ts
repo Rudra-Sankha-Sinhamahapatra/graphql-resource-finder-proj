@@ -143,16 +143,9 @@ export const ResourceResolver = {
     findAllResources: async (
       _:any,
       __:any,
-      context: Context
+      ___:any
     ) => {
-      try {
-        const user = checkAuth(context);
-        if(!user) {
-          throw new GraphQLError("Not authenticated", {
-            extensions: { code: "UNAUTHENTICATED" },
-          });
-        }
-  
+      try {  
         const resources = await ResourceModel.find({});
         return resources;
       } catch (error) {
