@@ -7,6 +7,7 @@ import CreateResource from './pages/CreateResource';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import { AuthProvider } from './context/AuthContext';
+import Profile from './pages/Profile';
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
             <Route path="create-resource" element={<CreateResource />} />
             <Route path="login" element={<Login />} />
             <Route path="register" element={<Register />} />
+            <Route path="profile" element={<Profile />} />
           </Route>
         </Routes>
       </Router>

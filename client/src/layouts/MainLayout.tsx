@@ -5,6 +5,9 @@ import {
   Bars3Icon,
   XMarkIcon,
 } from '@heroicons/react/24/outline';
+import type { User } from '../graphql/types/user';
+import { useQuery } from '@apollo/client';
+import { GET_USER_DETAILS } from '../graphql/queries/user.queries';
 
 const navigation = [
   { name: 'Resources', href: '/resources' },
@@ -16,10 +19,6 @@ function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(' ');
 }
 
-interface User {
-  username: string;
-  email: string;
-}
 
 export default function MainLayout() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -28,12 +27,18 @@ export default function MainLayout() {
   const navigate = useNavigate();
   const [profileMenuOpen, setProfileMenuOpen] = useState(false);
 
-  useEffect(() => {
-    const userStr = localStorage.getItem('user');
-    if (userStr) {
-      setUser(JSON.parse(userStr));
+  const { data: userData,loading: userLoading } = useQuery<{getUserDetails: User}>(GET_USER_DETAILS,{
+    onError: (error) => {
+      if (error.message.includes('Unauthorized')) {
+        handleLogout();
+      }
     }
-  }, []);
+  });
+
+  useEffect(() => {
+    setUser(userData?.getUserDetails || null);
+  }, [userData]);
+
 
   const handleLogout = () => {
     localStorage.removeItem('token');
@@ -78,7 +83,12 @@ export default function MainLayout() {
             ))}
           </div>
           <div className="hidden lg:flex lg:flex-1 lg:justify-end">
-            {user ? (
+            {userLoading ? (
+              <div className="flex items-center gap-x-4">
+                <div className="h-8 w-8 rounded-full bg-indigo-600 animate-pulse" />
+                <div className="h-4 w-24 bg-gray-200 animate-pulse" />
+              </div>
+            ) : user ? (
               <div className="relative">
                 <button
                   type="button"
@@ -94,6 +104,12 @@ export default function MainLayout() {
                     <div className="px-4 py-2 text-sm text-gray-700">
                       {user.username}
                     </div>
+                    <Link to="/profile" 
+                    className="block w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100"
+                    onClick={() => setProfileMenuOpen(false)}
+                    >
+                    My Profile
+                    </Link>
                     <button
                       onClick={handleLogout}
                       className="block w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100"
@@ -154,6 +170,12 @@ export default function MainLayout() {
                           <span>{user.username}</span>
                         </div>
                       </div>
+                      <Link to="/profile"
+                      className="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
+                      onClick={() => setMobileMenuOpen(false)}
+                      >
+                        My Profile
+                      </Link>
                       <button
                         className="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
                         onClick={() => {
