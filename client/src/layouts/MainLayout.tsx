@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { Dialog, } from '@headlessui/react';
 import {
@@ -8,6 +8,7 @@ import {
 import type { User } from '../graphql/types/user';
 import { useQuery } from '@apollo/client';
 import { GET_USER_DETAILS } from '../graphql/queries/user.queries';
+import { useAuthContext } from '../context/AuthContext';
 
 const navigation = [
   { name: 'Resources', href: '/resources' },
@@ -22,30 +23,24 @@ function classNames(...classes: string[]) {
 
 export default function MainLayout() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [user, setUser] = useState<User | null>(null);
+  const { user, logout } = useAuthContext();
   const location = useLocation();
   const navigate = useNavigate();
   const [profileMenuOpen, setProfileMenuOpen] = useState(false);
 
-  const { data: userData,loading: userLoading } = useQuery<{getUserDetails: User}>(GET_USER_DETAILS,{
+  const { loading: userLoading } = useQuery<{getUserDetails: User}>(GET_USER_DETAILS,{
     onError: (error) => {
       if (error.message.includes('Unauthorized')) {
-        handleLogout();
+       logout();
       }
     }
   });
 
-  useEffect(() => {
-    setUser(userData?.getUserDetails || null);
-  }, [userData]);
-
-
   const handleLogout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-    setUser(null);
+    logout();
     navigate('/login');
   };
+
 
   return (
     <div className="min-h-screen bg-white">

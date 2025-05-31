@@ -1,11 +1,28 @@
-import { useState } from 'react';
-import { mockResources } from '../utils/mockData';
-import type { Resource } from '../utils/mockData';
 import { LinkIcon, BookmarkIcon } from '@heroicons/react/24/outline';
+import { useQuery } from '@apollo/client';
+import type { ResourcesData } from '../graphql/types/resources';
+import { GET_ALL_RESOURCES } from '../graphql/queries/user.queries';
 
 export default function Resources() {
-  const [resources] = useState<Resource[]>(mockResources);
+  const {loading, error, data} = useQuery<ResourcesData>(GET_ALL_RESOURCES);
+  
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-lg text-gray-600">Loading resources...</div>
+      </div>
+    );
+  }
 
+  if (error) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-lg text-red-600">Error loading resources: {error.message}</div>
+      </div>
+    );
+  }
+
+  const resources = data?.findAllResources || [];
   return (
     <div className="bg-white py-24 sm:py-32">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
