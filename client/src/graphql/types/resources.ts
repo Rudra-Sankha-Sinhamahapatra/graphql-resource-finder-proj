@@ -19,3 +19,11 @@ export interface Resource {
   export interface ResourcesData {
     findAllResources: Resource[];
   }
+
+  export interface FormData {
+    name: string;
+    description: string;
+    link: string;
+    imageUrl: string;
+  }
+  
