@@ -1,13 +1,10 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { LinkIcon } from '@heroicons/react/24/outline';
-
-interface FormData {
-  name: string;
-  description: string;
-  link: string;
-  imageUrl: string;
-}
+import type { FormData } from '../graphql/types/resources';
+import { useMutation } from '@apollo/client';
+import { CREATE_RESOURCE } from '../graphql/mutations/resource';
+import { toast } from 'react-hot-toast';
 
 export default function CreateResource() {
   const navigate = useNavigate();
@@ -18,11 +15,38 @@ export default function CreateResource() {
     imageUrl: '',
   });
 
+  const [createResource, { loading }] = useMutation(CREATE_RESOURCE, {
+    onCompleted: () => {
+      toast.success('Resource created successfully!');
+      navigate('/my-resources');
+    },
+    onError: (error) => {
+      if (error.graphQLErrors[0]?.extensions?.code === 'BAD_USER_INPUT') {
+        toast.error('Please check your input and try again.');
+      } else if (error.graphQLErrors[0]?.extensions?.code === 'UNAUTHENTICATED') {
+        toast.error('Please login to create a resource');
+        navigate('/login');
+      } else {
+        toast.error('An error occurred while creating the resource');
+      }
+    },
+  });
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: Handle form submission with Apollo Client
-    console.log('Form submitted:', formData);
-    navigate('/my-resources');
+    
+    try {
+      await createResource({
+        variables: {
+          name: formData.name,
+          description: formData.description,
+          link: formData.link,
+          imageUrl: formData.imageUrl,
+        },
+      });
+    } catch (error) {
+      console.error('Error creating resource:', error);
+    }
   };
 
   return (
@@ -123,9 +147,10 @@ export default function CreateResource() {
               </button>
               <button
                 type="submit"
-                className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                disabled={loading}
+                className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:bg-indigo-300"
               >
-                Create Resource
+                {loading ? 'Creating...' : 'Create Resource'}
               </button>
             </div>
           </form>
